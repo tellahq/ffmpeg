@@ -96,12 +96,14 @@ void report_and_exit(int ret)
     exit_program(AVUNERROR(ret));
 }
 
+int emscripten_exit(int code);
+
 void exit_program(int ret)
 {
     if (program_exit)
         program_exit(ret);
 
-    exit(ret);
+    exit(emscripten_exit(ret));
 }
 
 double parse_number_or_die(const char *context, const char *numstr, int type,
