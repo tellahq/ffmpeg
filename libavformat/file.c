@@ -38,6 +38,9 @@
 #include "os_support.h"
 #include "url.h"
 
+extern int emscripten_read_async(int fd, unsigned char* buf, int size);
+extern void emscripten_close_async(int fd);
+
 /* Some systems may not have S_ISFIFO */
 #ifndef S_ISFIFO
 #  ifdef S_IFIFO
@@ -111,7 +114,11 @@ static int file_read(URLContext *h, unsigned char *buf, int size)
     FileContext *c = h->priv_data;
     int ret;
     size = FFMIN(size, c->blocksize);
-    ret = read(c->fd, buf, size);
+    if ((c->fd == 3) || (c->fd == 4)) {
+        ret = emscripten_read_async(c->fd, buf, size);
+    } else {
+        ret = read(c->fd, buf, size);
+    }
     if (ret == 0 && c->follow)
         return AVERROR(EAGAIN);
     if (ret == 0)
@@ -266,6 +273,7 @@ static int64_t file_seek(URLContext *h, int64_t pos, int whence)
 static int file_close(URLContext *h)
 {
     FileContext *c = h->priv_data;
+    emscripten_close_async(c->fd);
     int ret = close(c->fd);
     return (ret == -1) ? AVERROR(errno) : 0;
 }
