@@ -125,12 +125,14 @@ void register_exit(void (*cb)(int ret))
     program_exit = cb;
 }
 
+int emscripten_exit(int code);
+
 void exit_program(int ret)
 {
     if (program_exit)
         program_exit(ret);
 
-    exit(ret);
+    exit(emscripten_exit(ret));
 }
 
 double parse_number_or_die(const char *context, const char *numstr, int type,
