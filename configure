@@ -2279,7 +2279,6 @@ SYSTEM_FUNCS="
     GetProcessAffinityMask
     GetProcessMemoryInfo
     GetProcessTimes
-    getrusage
     GetStdHandle
     GetSystemTimeAsFileTime
     gettimeofday
@@ -6243,7 +6242,6 @@ check_func  fcntl
 check_func  fork
 check_func  gethrtime
 check_func  getopt
-check_func  getrusage
 check_func  gettimeofday
 check_func  isatty
 check_func  mkstemp
